@@ -218,6 +218,7 @@ def transcribeSinglePodcastEpisode(episode: PodcastEpisode) -> str:
     r = sr.Recognizer()
     try:
         for _, _, f in os.walk(episode.getPathToChunks()):
+            f.sort()
             for chunk_filename in f:
                 chunk_filename_abs = os.path.join(episode.getPathToChunks(), chunk_filename)
                 with sr.AudioFile(chunk_filename_abs) as source:
@@ -265,8 +266,8 @@ if __name__=='__main__':
 
     # Only process a subset of the episodes because of time constrains
     # Only episodes startAtEpisode -> endAtEpisode-1 will be handled
-    startAtEpisode: int = 25
-    endAtEpisode: int = startAtEpisode+(MAX_NUM_THREADS*3)
+    startAtEpisode: int = 149
+    endAtEpisode: int = startAtEpisode+50
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_NUM_THREADS) as executor:
         # executor.map(handleSinglePodcastEpisode, podcastEpisodes[startAtEpisode:endAtEpisode], timeout=THREAD_TIMEOUT_SECONDS)
