@@ -11,6 +11,7 @@ from pydub.silence import split_on_silence
 import multiprocessing
 import concurrent.futures
 import re
+from typing import Set
 
 MAX_NUM_THREADS: int = multiprocessing.cpu_count()
 THREAD_TIMEOUT_SECONDS: int = 300
@@ -20,6 +21,8 @@ CHUNK_DIR_NAME = 'chunks'
 LOGFILE = 'applicationLog.log'
 
 REGEX_MATCH_FOR_EPISODE_NR = re.compile(r"folge (\d+)", re.IGNORECASE)
+REGEX_MATCH_FOR_EPISODES_NR = re.compile(r"folgen (\d+)", re.IGNORECASE)
+REGEX_MATCH_FOR_MULTIPLE_EPISODE_NRS = re.compile(r"folgen \d+ und (\d+)", re.IGNORECASE)
 
 class PodcastEpisode:
     def __init__(self, episodeNumber: int, downloadUrl: str, pathToWav: str=None, pathToChunks: str=None, pathToTranscript: str = None, name: str=None, pathToLinkedEpisodes: str=None):
@@ -155,13 +158,19 @@ def analyseTranscriptOfEpisode(episode: PodcastEpisode):
     logging.debug(f"Analysing the transcript of Episode {episode.getEpisodeNumber()}")
     with open(str(episode.getPathToTranscript()), 'r') as transcript_file:
         transcript = transcript_file.read().replace('\n',' ')
-    quoted_episodes = set([int(epNr) for epNr in REGEX_MATCH_FOR_EPISODE_NR.findall(transcript)])
+    quoted_episodes = analyseTranscriptWithRegexes(transcript, [REGEX_MATCH_FOR_EPISODE_NR, REGEX_MATCH_FOR_EPISODES_NR, REGEX_MATCH_FOR_MULTIPLE_EPISODE_NRS])
     quoted_episodes.discard(episode.getEpisodeNumber()) # remove this episode's own episode number
     with open(str(episode.getExpectedPathToLinkedEpisodes()), 'w') as output_file:
         for quoted_episode in quoted_episodes:
             output_file.write(str(quoted_episode))
             output_file.write(os.linesep)
     episode.setPathToLinkedEpisodes(episode.getExpectedPathToLinkedEpisodes())
+
+def analyseTranscriptWithRegexes(transcript: str, regexes) -> Set[int]:
+    quoted_episodes = set()
+    for regex in regexes:
+        quoted_episodes.update([int(epNr) for epNr in regex.findall(transcript)])
+    return quoted_episodes
 
 def downloadSinglePodcastEpisode(episode: PodcastEpisode):
     downloadUrl = episode.getDownloadUrl()
