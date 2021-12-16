@@ -276,8 +276,8 @@ if __name__=='__main__':
 
 	# Only process a subset of the episodes because of time constrains
 	# Only episodes startAtEpisode -> endAtEpisode will be handled
-	startAtEpisode: int = 313
-	endAtEpisode: int = 313
+	startAtEpisode: int = 351
+	endAtEpisode: int = 377
 
 	with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_NUM_THREADS) as executor:
 		# executor.map(handleSinglePodcastEpisode, podcastEpisodes[startAtEpisode:endAtEpisode], timeout=THREAD_TIMEOUT_SECONDS)

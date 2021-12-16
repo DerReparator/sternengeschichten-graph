@@ -10,6 +10,23 @@ As you can see, episode 139 references the episode 131 and 4. Episode 101 is ref
 
 ## How to use
 
+### Only analyse the links
+
+After running the actual script for every episode, I decided to include the links
+that it found in this repository. In this way, you can come up with your own means
+of visualizing the links between episodes.
+
+In the folder [precompiled_links](./precompiled_links) you can find a `*.links`
+file for every episode. The filename contains the episode number. Every referenced
+episode is on its own line within the `*.links` file. The `*.links` file can be
+empty if there were no references found in the corresponding episode.
+
+To use the GraphViz visualization follow the setup steps in the next section and
+execute the [visualization.py](./visualization.py) script from step 5 with the folder
+`precompiled_links`.
+
+### Run the download, conversion, transcribing, ... yourself
+
 1. Activate a virtual environment under Python 3 (tested with 3.7.1)
 ```
 cd /this/directory/in/your/cloned/repo
@@ -35,9 +52,9 @@ machine from their [Website](https://graphviz.org/download/). Under MacOS, you c
 brew install graphviz
 ```
 
-4. Run the `sternengeschichten_graph.py` script which can take a very long time!
+4. Run the `sternengeschichten_graph.py` script which **can take a very long time**!
 
-5. For actual visualization, you need to execute `visualization.py`to draw a graph from a folder containing `*.links`files.
+5. For actual visualization, you need to execute `visualization.py` to draw a graph from a folder containing `*.links` files.
 
 ## For developers
 
